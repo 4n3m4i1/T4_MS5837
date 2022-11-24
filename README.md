@@ -9,21 +9,21 @@ precision.
 An example program is provided outlining basic functionality. At this time altitude is not included as an output.
   
 ## Useful Functions
-Returns true on detection and initialization of sensor.
-- bool ms5837_init()
-Returns the model of the sensor. `0x00` for 30 bar, `0x01` for 2 bar, `0xFF` for unknown
-- uint8_t ms5837_getModel()
-Sets the density of the medium. Default is saltwater. `#define FRESH_WATER_OPERATION` to change default to fresh.
-- void ms5837_setFluidType()
-Begin the IntervalTimer and polling of the sensor
-- void ms5837_loop_begin()
-Returns true when unread or new data is ready to be read
-- bool ms5837_Data_ready()
-Returns the newest depth reading (meters)
-- float ms5837_Read_Depth()
-Returns the average of the last 0.25s of depth readings (meters)
-- float ms5837_Avg_Depth()
-Returns the newest temperature reading (celcius)
-- float ms5837_Read_Temp()
-Returns the average of the last 0.25s of temp readings (celcius)
-- float ms5837_Avg_Temp()
+- Returns true on detection and initialization of sensor.
+`bool ms5837_init()`
+- Returns the model of the sensor. `0x00` for 30 bar, `0x01` for 2 bar, `0xFF` for unknown
+`uint8_t ms5837_getModel()`
+- Sets the density of the medium. Default is saltwater. `#define FRESH_WATER_OPERATION` to change default to fresh.
+`void ms5837_setFluidType()`
+- Begin the IntervalTimer and polling of the sensor
+`void ms5837_loop_begin()`
+- Returns true when unread or new data is ready to be read
+`bool ms5837_Data_ready()`
+- Returns the newest depth reading (meters)
+`float ms5837_Read_Depth()`
+- Returns the average of the last 0.25s of depth readings (meters)
+`float ms5837_Avg_Depth()`
+- Returns the newest temperature reading (celcius)
+`float ms5837_Read_Temp()`
+- Returns the average of the last 0.25s of temp readings (celcius)
+`float ms5837_Avg_Temp()`
