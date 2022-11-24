@@ -4,7 +4,7 @@ This is a port of the Blue Robotics MS5837 Library to work with the enhanced Tee
 This port is non-blocking, using the Interval Timer provided by Paul Stoffregen's IntervalTimer.h provided in the Teensyduino Core.  
 `https://github.com/PaulStoffregen/cores/blob/master/teensy4/IntervalTimer.h`  
 By doing this the 40ms of downtime per pressure+temp read is avoided. New Data flags are provided by library functions.  
-In addition a signifigant number of arithmetic has been replaced with logical operations with no observable effect on  
+In addition a signifigant amount of arithmetic has been replaced with logical operations with no observable effect on  
 precision.  
 An example program is provided outlining basic functionality. At this time altitude is not included as an output.
   
