@@ -18,16 +18,16 @@ IntervalTimer pTimer;
 void ms5837_loop_begin(){
     // If the loop is optimized down we must call the first init
     //  before the interval spaced loop begins
-#ifdef OPTIMIZE_MS5873_LOOP
-    __ms5873_first_conversion();
+#ifdef OPTIMIZE_MS5837_LOOP
+    __ms5837_first_conversion();
 #endif
     // This starts an interval timer.
     //  Once D1 conversion (1) -> (D1) takes 20ms
     //  Requesting D2 conversion (2) -> (D2) takes 20ms
     //  Thus our interval should be 20ms, and at the end of
     //  one request cycle the next should be started.
-    pTimer.begin(ms5873_update, UPDATE_TIME_PER_STAGE);
-    pTimer.priority(MS5873_ISR_PRIORITY);
+    pTimer.begin(ms5837_update, UPDATE_TIME_PER_STAGE);
+    pTimer.priority(MS5837_ISR_PRIORITY);
 }
 
 void ms5837_loop_terminate(){
@@ -103,11 +103,11 @@ void ms5837_setFluidType(float density_kgper_mcub){
     pSensor.info.sens_fluid_density = density_kgper_mcub;
 }
 
-#ifdef OPTIMIZE_MS5873_LOOP                     // Cuts out a fair bit of overhead logic
-void __ms5873_first_conversion(){
+#ifdef OPTIMIZE_MS5837_LOOP                     // Cuts out a fair bit of overhead logic
+void __ms5837_first_conversion(){
     sendToMS5837(MS5837_CONVERT_D1_8192);
 }
-void ms5873_update(){
+void ms5837_update(){
     static volatile bool state__ = 0;
     static volatile uint8_t ct__ = 0;
     if(!state__){
@@ -126,7 +126,7 @@ void ms5873_update(){
         pSensor.info.D2_temp |= ((pSensor.info.D2_temp << 8) | read_uint8_WIRE());
         pSensor.info.D2_temp |= ((pSensor.info.D2_temp << 8) | read_uint8_WIRE());
 
-        ms5873_calculate_();
+        ms5837_calculate_();
 
         // Store values for averaging
         if(ct__ == 0){
@@ -145,7 +145,7 @@ void ms5873_update(){
 
         ct__ += 1;
 
-        pSensor.data.depth = ms5873_get_depth();
+        pSensor.data.depth = ms5837_get_depth();
         pSensor.data.temperature = pSensor.info.TEMP / 100.0f;
         pSensor.data.new_data_ready = 1;
         sendToMS5837(MS5837_CONVERT_D1_8192);       // Re issue start
@@ -153,7 +153,7 @@ void ms5873_update(){
     state__ = !state__;
 }
 #else
-void ms5873_update(){
+void ms5837_update(){
     // Read from Sensor
     if(&FAST_I2C == NULL) return;
     
@@ -180,8 +180,8 @@ void ms5873_update(){
             pSensor.info.D2_temp |= ((pSensor.info.D2_temp << 8) | read_uint8_WIRE());
             pSensor.info.D2_temp |= ((pSensor.info.D2_temp << 8) | read_uint8_WIRE());
 
-            ms5873_calculate_();
-            pSensor.data.depth = ms5873_get_depth();
+            ms5837_calculate_();
+            pSensor.data.depth = ms5837_get_depth();
             pSensor.data.temperature = pSensor.info.TEMP / 100.0f;
             pSensor.data.new_data_ready = 1;
             sendToMS5837(MS5837_CONVERT_D1_8192);       // Re issue start
@@ -197,7 +197,7 @@ void ms5873_update(){
 
 // Optimized down the standard maths
 //  removed most MUL and DIV, replaced with shifts
-void ms5873_calculate_(){
+void ms5837_calculate_(){
 	// Given C1-C6 and D1, D2, calculated TEMP and P
 	// Do conversion first and then second order temp compensation
 
@@ -285,7 +285,7 @@ void ms5873_calculate_(){
 }
 
 // Pa
-float ms5873_get_pressure(float conversion_){
+float ms5837_get_pressure(float conversion_){
   if(pSensor.info.model == MS5837_02BA_ID){
     return (pSensor.info.P * conversion_) / 100.0f;
   } else {
@@ -294,36 +294,36 @@ float ms5873_get_pressure(float conversion_){
 }
 
 // Meters
-float ms5873_get_depth(){
-    float _tmp__ = ms5873_get_pressure(MS5837_Pa_CONSTANT) - RESTING_ATMOSPHERIC_PRESSURE;
+float ms5837_get_depth(){
+    float _tmp__ = ms5837_get_pressure(MS5837_Pa_CONSTANT) - RESTING_ATMOSPHERIC_PRESSURE;
     _tmp__ /= (FLUID_DENSITY * AVG_GRAV_ACCEL);
     return _tmp__;
 }
 
-bool ms5873_Data_ready(){
+bool ms5837_Data_ready(){
     return pSensor.data.new_data_ready;
 }
 
-float ms5873_Read_Depth(){
+float ms5837_Read_Depth(){
     pSensor.data.new_data_ready = 0;            // Indicate we've read new data
     return pSensor.data.depth;
 }
 
-float ms5873_Read_Temp(){
+float ms5837_Read_Temp(){
     return pSensor.data.temperature;
 }
 
-float ms5873_Avg_Depth(){
+float ms5837_Avg_Depth(){
     pSensor.data.new_data_ready = 0;
     return (pSensor.data.depth + pSensor_1.depth + pSensor_2.depth + pSensor_3.depth) / 4.0f;
 }
 
-float ms5873_Avg_Temp(){
+float ms5837_Avg_Temp(){
     return (pSensor.data.temperature + pSensor_1.temperature + pSensor_2.temperature + pSensor_3.temperature) / 4.0f;
 }
 
 // This should never be needed, however it can be useful
-void ms5873_Data_Clear(){
+void ms5837_Data_Clear(){
     pSensor.data.new_data_ready = 0;
 }
 

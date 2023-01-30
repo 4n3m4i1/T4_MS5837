@@ -78,41 +78,41 @@ void ms5837_setFluidType(float density_kgper_mcub);
 
 // Returns true if Temp or Pressure has updated
 //  since last user read
-bool ms5873_Data_ready();
+bool ms5837_Data_ready();
 
 // Returns most recent depth reading in meters
 //  Clears Data Ready Flag
-float ms5873_Read_Depth();
+float ms5837_Read_Depth();
 // Returns the average of the last 4 samples taken evenly over 0.25s, in meters
 //  Clears Data Ready Flag
-float ms5873_Avg_Depth();
+float ms5837_Avg_Depth();
 
 // Returns most recent temperature reading, in celcius
-float ms5873_Read_Temp();
+float ms5837_Read_Temp();
 // Returns the average of the last 4 samples taken evenly over 0.25s, in celcius
-float ms5873_Avg_Temp();
+float ms5837_Avg_Temp();
 
 // Clears data ready flag. This is automatically done
 //  upon a Read_Depth()
-void ms5873_Data_Clear();
+void ms5837_Data_Clear();
 
 
 
 // Update and recalculate values
-#ifdef OPTIMIZE_MS5873_LOOP
-void __ms5873_first_conversion();
+#ifdef OPTIMIZE_MS5837_LOOP
+void __ms5837_first_conversion();
 #endif
 // Send appropriate D1 or D2 conversion start
 //  store read values to appropriate location
 //  begins the conversion upon D1 and D2 read.
-void ms5873_update();
+void ms5837_update();
 
 // Does the conversion math, this is slow
-void ms5873_calculate_();
+void ms5837_calculate_();
 
 // Minor intermediary conversions
-float ms5873_get_pressure(float conversion_);
-float ms5873_get_depth();
+float ms5837_get_pressure(float conversion_);
+float ms5837_get_depth();
 
 // Verify PROM contents
 uint8_t ms5837_crc4(uint16_t n_prom[]);

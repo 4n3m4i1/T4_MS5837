@@ -46,11 +46,11 @@ void loop() {
 
   // Check if data is ready and unique
   //    (Conversion and Calculation is done, data has not been read yet)
-  if(ms5873_Data_ready()){
+  if(ms5837_Data_ready()){
     // Reading the depth or average depth will clear the New Data Ready flag, however reading Temp will not
-    Serial.printf("Depth:\t\t%.4f meters\n", ms5873_Read_Depth());    // Read Depth Value
-    Serial.printf("Avg Depth:\t%.4f meters\n", ms5873_Avg_Depth());   // Read Average of last 4 Depth Values
-    Serial.printf("Temp:\t\t%.2f deg C\n", ms5873_Read_Temp());       // Read Temp value
-    Serial.printf("Avg Temp:\t%.2f deg C\n\n", ms5873_Avg_Temp());    // Read Temp value
+    Serial.printf("Depth:\t\t%.4f meters\n", ms5837_Read_Depth());    // Read Depth Value
+    Serial.printf("Avg Depth:\t%.4f meters\n", ms5837_Avg_Depth());   // Read Average of last 4 Depth Values
+    Serial.printf("Temp:\t\t%.2f deg C\n", ms5837_Read_Temp());       // Read Temp value
+    Serial.printf("Avg Temp:\t%.2f deg C\n\n", ms5837_Avg_Temp());    // Read Temp value
   }
 }
