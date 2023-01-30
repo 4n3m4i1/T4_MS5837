@@ -27,3 +27,11 @@ An example program is provided outlining basic functionality. At this time altit
 
 - `float ms5837_Avg_Temp()` Returns the average of the last 0.25s of temp readings (celcius)
 
+## How to Install
+- Clone this repository to some directory
+- Compress the `T4_MS5837` Folder into a `.zip`
+- Open Arduino IDE
+- `Sketch -> Include Library -> Add Zip Library`
+- Add the `T4_MS5837.zip` to your libraries
+
+
