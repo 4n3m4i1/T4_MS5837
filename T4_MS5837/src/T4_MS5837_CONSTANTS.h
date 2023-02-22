@@ -1,8 +1,8 @@
 // Test for newer mode, this enables averaging as well
-#define OPTIMIZE_MS5873_LOOP
+#define OPTIMIZE_MS5837_LOOP
 
-#ifndef MS5873_ISR_PRIORITY
-#define MS5873_ISR_PRIORITY     253             // Low default ISR prio
+#ifndef MS5837_ISR_PRIORITY
+#define MS5837_ISR_PRIORITY     253             // Low default ISR prio
 #endif
 
 // Time in microseconds to wait between stages

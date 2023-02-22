@@ -1,4 +1,5 @@
 #include "T4_MS5837.h"
+#include "T4_MS5837_CONSTANTS.h"
 #include <i2c_device.h>
 #include <i2c_driver_wire.h> 
 #include <IntervalTimer.h>
@@ -211,25 +212,25 @@ void ms5837_calculate_(){
 	int64_t SENS2 = 0;
 
 	// Terms called
-	//dT = pSensor.info.D2_temp-uint32_t(pSensor.info.C[5])*256l;
-	dT = pSensor.info.D2_temp-((uint32_t)(pSensor.info.C[5]) << 8);
+	dT = pSensor.info.D2_temp-uint32_t(pSensor.info.C[5])*256l;
+	//dT = pSensor.info.D2_temp-((uint32_t)(pSensor.info.C[5]) << 8);
 
     if ( pSensor.info.model == MS5837_02BA_ID ) {
-		//SENS = int64_t(pSensor.info.C[1])*65536l + (int64_t(pSensor.info.C[3])*dT)/128l;
+		SENS = int64_t(pSensor.info.C[1])*65536l + (int64_t(pSensor.info.C[3])*dT)/128l;
 		//SENS = (int64_t)(pSensor.info.C[1])*65536l + (((int64_t)(pSensor.info.C[3])*dT) >> 7);
-        SENS = ((int64_t)(pSensor.info.C[1]) << 16) + (((int64_t)(pSensor.info.C[3])*dT) >> 7);
-        //OFF = int64_t(pSensor.info.C[2])*131072l + (int64_t(pSensor.info.C[4])*dT)/64l;
+        //SENS = ((int64_t)(pSensor.info.C[1]) << 16) + (((int64_t)(pSensor.info.C[3])*dT) >> 7);
+        OFF = int64_t(pSensor.info.C[2])*131072l + (int64_t(pSensor.info.C[4])*dT)/64l;
 		//OFF = (int64_t)(pSensor.info.C[2])*131072l + (((int64_t)(pSensor.info.C[4])*dT) >> 6);
-        OFF = ((int64_t)(pSensor.info.C[2]) << 17) + (((int64_t)(pSensor.info.C[4])*dT) >> 6);
-        //pSensor.info.P = (pSensor.info.D1_pres*SENS / (2097152l) - OFF) / (32768l);
-        pSensor.info.P = ((pSensor.info.D1_pres * SENS >> 21) - OFF) >> 15;
+        //OFF = ((int64_t)(pSensor.info.C[2]) << 17) + (((int64_t)(pSensor.info.C[4])*dT) >> 6);
+        pSensor.info.P = (pSensor.info.D1_pres*SENS / (2097152l) - OFF) / (32768l);
+        //pSensor.info.P = ((pSensor.info.D1_pres * SENS >> 21) - OFF) >> 15;
 	} else {
-		//SENS = int64_t(pSensor.info.C[1])*32768l + (int64_t(pSensor.info.C[3])*dT)/256l;
-		SENS = ((int64_t)(pSensor.info.C[1]) << 15) + (((int64_t)(pSensor.info.C[3])*dT) >> 8);
-        //OFF = int64_t(pSensor.info.C[2])*65536l + (int64_t(pSensor.info.C[4])*dT)/128l;
-		OFF = ((int64_t)(pSensor.info.C[2]) << 16) + (((int64_t)(pSensor.info.C[4])*dT) >> 7);
-        //pSensor.info.P = (pSensor.info.D1_pres * SENS/(2097152l) - OFF) / (8192l);
-        pSensor.info.P = ((pSensor.info.D1_pres * SENS >> 21) - OFF) >> 13;
+		SENS = int64_t(pSensor.info.C[1])*32768l + (int64_t(pSensor.info.C[3])*dT)/256l;
+		//SENS = ((int64_t)(pSensor.info.C[1]) << 15) + (((int64_t)(pSensor.info.C[3])*dT) >> 8);
+        OFF = int64_t(pSensor.info.C[2])*65536l + (int64_t(pSensor.info.C[4])*dT)/128l;
+		//OFF = ((int64_t)(pSensor.info.C[2]) << 16) + (((int64_t)(pSensor.info.C[4])*dT) >> 7);
+        pSensor.info.P = (pSensor.info.D1_pres * SENS/(2097152l) - OFF) / (8192l);
+        //pSensor.info.P = ((pSensor.info.D1_pres * SENS >> 21) - OFF) >> 13;
 	}
 
 	// Temp conversion, shifts break this :^(
@@ -239,33 +240,33 @@ void ms5837_calculate_(){
 	//Second order compensation
 	if ( pSensor.info.model == MS5837_02BA_ID ) {
 		if((pSensor.info.TEMP / 100)<20){         //Low temp
-			//Ti = (11*int64_t(dT)*int64_t(dT))/(34359738368LL);
-            Ti = (11*int64_t(dT)*int64_t(dT)) >> 35;
-			//OFFi = (31*(pSensor.info.TEMP-2000)*(pSensor.info.TEMP-2000))/8;
-            OFFi = (31*(pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000)) >> 3);
-			//SENSi = (63*(pSensor.info.TEMP-2000)*(pSensor.info.TEMP-2000))/32;
-            SENSi = (63*(pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000)) >> 5);
+			Ti = (11*int64_t(dT)*int64_t(dT))/(34359738368LL);
+            //Ti = (11*int64_t(dT)*int64_t(dT)) >> 35;
+			OFFi = (31*(pSensor.info.TEMP-2000)*(pSensor.info.TEMP-2000))/8;
+            //OFFi = (31*(pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000)) >> 3);
+			SENSi = (63*(pSensor.info.TEMP-2000)*(pSensor.info.TEMP-2000))/32;
+            //SENSi = (63*(pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000)) >> 5);
 		}
 	} else {
 		if((pSensor.info.TEMP / 100) < 20){         //Low temp
-			//Ti = (3*int64_t(dT)*int64_t(dT))/(8589934592LL);
-            Ti = (3*int64_t(dT)*int64_t(dT)) >> 33;
-			//OFFi = (3*(pSensor.info.TEMP-2000)*(pSensor.info.TEMP-2000))/2;
-            OFFi = (3*(pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000)) >> 1);
-			//SENSi = (5*(pSensor.info.TEMP-2000)*(pSensor.info.TEMP-2000))/8;
-            SENSi = (5*(pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000)) >> 3);
+			Ti = (3*int64_t(dT)*int64_t(dT))/(8589934592LL);
+            //Ti = (3*int64_t(dT)*int64_t(dT)) >> 33;
+			OFFi = (3*(pSensor.info.TEMP-2000)*(pSensor.info.TEMP-2000))/2;
+            //OFFi = (3*(pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000)) >> 1);
+			SENSi = (5*(pSensor.info.TEMP-2000)*(pSensor.info.TEMP-2000))/8;
+            //SENSi = (5*(pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000)) >> 3);
 			
             if((pSensor.info.TEMP / 100) < -15){    //Very low temp
 				OFFi = OFFi+7*(pSensor.info.TEMP+1500l)*(pSensor.info.TEMP+1500l);
-				//SENSi = SENSi+4*(pSensor.info.TEMP+1500l)*(pSensor.info.TEMP+1500l);
-                SENSi = SENSi + (((pSensor.info.TEMP+1500l) * (pSensor.info.TEMP+1500l)) << 2);
+				SENSi = SENSi+4*(pSensor.info.TEMP+1500l)*(pSensor.info.TEMP+1500l);
+                //SENSi = SENSi + (((pSensor.info.TEMP+1500l) * (pSensor.info.TEMP+1500l)) << 2);
 			}
 		}
 		else if((pSensor.info.TEMP / 100) >= 20){    //High temp
-			//Ti = 2*(dT*dT)/(137438953472LL);
-            Ti = (int32_t)((int64_t)(dT * dT) >> 36);
-			//OFFi = (1*(pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000))/16);
-			OFFi = ((pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000)) >> 4);
+			Ti = 2*(dT*dT)/(137438953472LL);
+            //Ti = (int32_t)((int64_t)(dT * dT) >> 36);
+			OFFi = (1*(pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000))/16);
+			//OFFi = ((pSensor.info.TEMP-2000)*((pSensor.info.TEMP-2000)) >> 4);
             SENSi = 0;
 		}
 	}
@@ -276,11 +277,11 @@ void ms5837_calculate_(){
 	pSensor.info.TEMP = (pSensor.info.TEMP - Ti);
 
 	if (pSensor.info.model == MS5837_02BA_ID) {
-		//pSensor.info.P = (((pSensor.info.D1_pres*SENS2)/2097152l-OFF2)/32768l);
-        pSensor.info.P = (((pSensor.info.D1_pres*SENS2)/2097152l-OFF2) >> 15);
+		pSensor.info.P = (((pSensor.info.D1_pres*SENS2)/2097152l-OFF2)/32768l);
+        //pSensor.info.P = (((pSensor.info.D1_pres*SENS2)/2097152l-OFF2) >> 15);
 	} else {
-		//pSensor.info.P = (((pSensor.info.D1_pres*SENS2)/2097152l-OFF2)/8192l);
-        pSensor.info.P = (((pSensor.info.D1_pres*SENS2)/2097152l-OFF2) >> 13);
+		pSensor.info.P = (((pSensor.info.D1_pres*SENS2)/2097152l-OFF2)/8192l);
+        //pSensor.info.P = (((pSensor.info.D1_pres*SENS2)/2097152l-OFF2) >> 13);
 	}
 }
 
